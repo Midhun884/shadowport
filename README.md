@@ -1,198 +1,347 @@
-Midhun To The Opensource Community
+# 🚀 shadowport
 
-I use this to handle SSH and API pages for over 2000 devices, and it works.
+### Minimal Python TCP Tunnel for Secure Reverse Proxying
 
-Midhun Link is a small Python TCP tunnel pair. One script runs on a public server. The other script runs near your private local service. Together they let remote users connect to a public port while the traffic is quietly carried back to your local machine.
+**shadowport** is a lightweight TCP tunnel system written in Python that allows you to expose private local services through a public server.
 
-In simple words
+I built this to manage SSH and API access for **2000+ devices**, and it does exactly what it needs to do — small, fast, and reliable.
 
-Your local service can stay at 127.0.0.1:1194.
-The public server can listen on remote port 1194.
-Users connect to the server.
-The client opens work connections back to the server.
-Raw TCP bytes are relayed both ways.
-Everybody gets where they need to go. Beautiful. Suspiciously simple. We allow it.
+No complicated frameworks.  
+No unnecessary layers.  
+Just a simple tunnel that works.
 
-What this can handle
+---
 
-TCP connectivity between a public server and a private local service.
-TLS connections between client and server.
-Yamux tcpMux mode for carrying the control stream when needed.
-Token based authentication using the configured token.
-One TCP proxy registration per running client.
-Automatic work connections when a remote user connects.
-Raw byte relay, so it can carry SSH, VPN style TCP traffic, web admin panels, API pages, dashboards, and other TCP services.
-Optional TOML config loading with -c when the file follows the supported shape.
+## 🌐 How It Works
 
-What is inside
+```
+Private Network                     Public Server
+─────────────────                  ─────────────────
 
-Server/server.py starts the public listener and waits for clients.
-Client/client.py connects to the server, logs in, registers one TCP proxy, and keeps the tunnel alive while the script is running.
-requirements.txt lists the only external dependency.
+ Local Service                      shadowport Server
+ 127.0.0.1:1194  ◄──────────────►   Public :1194
 
-Default proxy setup
+        ▲                                  ▲
+        │                                  │
+        │                                  │
+   Your Device                       Remote Users
 
-Proxy name: ssh_XQC24OG
-Remote port: 1194
-Local target: 127.0.0.1:1194
+```
 
-If your local service runs somewhere else, change localIP and localPort in Client/client.py.
-If you want the public side to use another port, change remotePort in Client/client.py.
-If you want another proxy name, change name in Client/client.py.
+In simple terms:
 
-Quick start
+1. A server runs on a machine with a public IP.
+2. A client runs near your private service.
+3. Users connect to the public server.
+4. Traffic is forwarded securely back to your local service.
+5. Raw TCP data flows between both sides.
 
-1. Install dependencies.
+Your service stays private.  
+Your users get access.
 
-   python -m pip install -r requirements.txt
+Simple. Effective. Beautifully suspicious.
 
-2. Edit the client config in Client/client.py.
+---
 
-   Set serverAddr to your server IP or domain.
-   Set auth.token to the same token used by the server.
-   Set name to your proxy name.
-   Set localIP and localPort to the service running near the client.
-   Set remotePort to the public port users should connect to.
+# ✨ Features
 
-3. Start the server.
+## Core Features
 
-   python Server/server.py
+✅ TCP reverse tunneling  
+✅ Public-to-private service forwarding  
+✅ Raw TCP byte relay  
+✅ SSH forwarding support  
+✅ API panel exposure  
+✅ Dashboard access  
+✅ Private web service access  
+✅ VPN-style TCP traffic support  
 
-4. Start the client.
+---
 
-   python Client/client.py
+## Security
 
-5. Connect to the public server on the remote port.
+🔐 TLS encrypted client-server communication  
+🔑 Token-based authentication  
+🛡 AES-CFB protected control messages  
+📜 Optional certificate verification support  
 
-   Example for SSH style traffic:
+---
 
-   ssh user@your-server-ip -p 1194
+## Advanced Features
 
-Configuration locations
+⚡ Automatic work connections  
+⚡ Yamux TCP multiplexing support  
+⚡ TOML configuration support  
+⚡ Lightweight Python implementation  
+⚡ One proxy registration per client  
 
-Server token:
+---
 
-   Server/server.py
-   EMBEDDED_CONFIG
-   auth.token
+# 📦 Project Structure
 
-Client token:
+```
+shadowport/
+│
+├── Server/
+│   └── server.py        # Public tunnel server
+│
+├── Client/
+│   └── client.py        # Local tunnel client
+│
+├── requirements.txt
+│
+└── README.md
+```
 
-   Client/client.py
-   EMBEDDED_CONFIG
-   auth.token
+---
 
-Server address:
+# ⚡ Quick Start
 
-   Client/client.py
-   EMBEDDED_CONFIG
-   serverAddr
+## 1. Install Requirements
 
-Server port:
+```bash
+python -m pip install -r requirements.txt
+```
 
-   Client/client.py
-   EMBEDDED_CONFIG
-   serverPort
+---
 
-TLS:
+# 2. Configure Client
 
-   Client/client.py
-   EMBEDDED_CONFIG
-   transport.tls.enable
+Edit:
 
-Set it to true to use TLS.
-The server creates a temporary certificate when it starts.
-The client accepts that certificate by default when no trusted CA file is configured.
+```
+Client/client.py
+```
 
-Yamux tcpMux:
+Update:
 
-The client will try normal TCP first.
-If needed, it also tries yamux mode automatically.
-That means you usually do not need to touch anything.
+```python
+serverAddr = "YOUR_SERVER_IP"
+serverPort = 7000
+```
 
-Proxy details:
+Set authentication:
 
-   Client/client.py
-   EMBEDDED_CONFIG
-   proxies
+```python
+auth.token = "YOUR_SECRET_TOKEN"
+```
 
-Inside the first proxy entry, edit:
+Configure your proxy:
 
-   name
-   type
-   localIP
-   localPort
-   remotePort
+```python
+name = "ssh_XQC24OG"
+type = "tcp"
 
-Supported TOML config
+localIP = "127.0.0.1"
+localPort = 1194
 
-You can load another config file with -c.
+remotePort = 1194
+```
+
+---
+
+# 3. Start Server
+
+On your public server:
+
+```bash
+python Server/server.py
+```
+
+---
+
+# 4. Start Client
+
+Near your private service:
+
+```bash
+python Client/client.py
+```
+
+---
+
+# 5. Connect
+
+Example SSH access:
+
+```bash
+ssh user@your-server-ip -p 1194
+```
+
+Your private service is now reachable through the public server.
+
+---
+
+# ⚙️ Configuration
+
+## Server Configuration
+
+Location:
+
+```
+Server/server.py
+```
+
+Edit:
+
+```
+EMBEDDED_CONFIG
+
+auth.token
+```
+
+---
+
+## Client Configuration
+
+Location:
+
+```
+Client/client.py
+```
+
+Available settings:
+
+### Server
+
+```text
+serverAddr
+serverPort
+```
+
+### Authentication
+
+```text
+auth.token
+```
+
+### Proxy
+
+```text
+name
+type
+localIP
+localPort
+remotePort
+```
+
+---
+
+# 📝 TOML Configuration
+
+You can load external configuration files:
+
+```bash
+python Client/client.py -c config.toml
+```
 
 Example:
 
-   python Client/client.py -c my-tunnel.toml
+```toml
+serverAddr = "your-server-ip"
+serverPort = 7000
 
-Supported shape:
 
-   serverAddr = "your-server-ip"
-   serverPort = 7000
+[auth]
+method = "token"
+token = "your-secret"
 
-   [auth]
-   method = "token"
-   token = "your-token"
 
-   [transport.tls]
-   enable = true
+[transport.tls]
+enable = true
 
-   [[proxies]]
-   name = "ssh_XQC24OG"
-   type = "tcp"
-   localIP = "127.0.0.1"
-   localPort = 1194
-   remotePort = 1194
 
-How the connection works
+[[proxies]]
 
-The client connects to the server.
-The client uses TLS when TLS is enabled.
-The client can use yamux tcpMux when the connection path needs it.
-The client authenticates with the configured token.
-The client logs in and receives a run ID.
-The client registers one TCP proxy.
-The server opens the remote public port.
-When a remote user connects, the server asks the client for a work connection.
-The client opens a work connection back to the server.
-The client connects to the local target.
-Both sides relay raw TCP bytes until the connection closes.
+name = "ssh_tunnel"
+type = "tcp"
 
-Encryption and authentication
+localIP = "127.0.0.1"
+localPort = 1194
 
-TLS protects the socket between the client and server when enabled.
-The control channel also uses AES-CFB with a key derived from your token.
-The login request proves the client knows the token without sending the token as plain text.
-Keep the token private. If someone gets it, they get invited to the party, and this is not that kind of party.
+remotePort = 1194
+```
 
-Important notes
+---
 
-Keep the server and client token the same. If they disagree, they will stare at each other like two people pulling a push door.
+# 🔒 Security Notes
 
-Use a remote port that is free. Ports already in use do not negotiate, they simply judge you.
+Keep your token private.
 
-Open the server firewall for the control port and the remote proxy port.
+The token controls access to your tunnel.  
+Anyone with the token can attempt to connect.
 
-Run the server on a machine with a public IP or a reachable domain.
+Use:
 
-Run the client near the local service you want to expose.
+- Strong random tokens
+- Firewall rules
+- Restricted server ports
+- TLS where possible
 
-This is intentionally small and readable. Fancy frameworks were not invited because the script already has a job and enough attitude.
+---
 
-Want to add more tools or features
+# 🔄 Connection Flow
 
-Add more CLI options in Client/client.py and Server/server.py if you want less hardcoded config.
-Add more config fields inside EMBEDDED_CONFIG if you want more defaults.
-Add more proxy handling inside the proxies list if you want multiple tunnels.
-Add logging if you want prettier output.
-Add service files if you want it to run forever on Linux or Windows.
-Add health checks if you enjoy knowing things before they explode.
+```
+Client
+  |
+  |  TLS Connection
+  |
+  ▼
+Server Authentication
+  |
+  ▼
+Proxy Registration
+  |
+  ▼
+Remote User Connects
+  |
+  ▼
+Server Requests Work Connection
+  |
+  ▼
+Client Connects Local Service
+  |
+  ▼
+TCP Traffic Relay
+```
 
-No limits. Do whatever you want. Happy to help.
+---
+
+# 🛠 Possible Improvements
+
+Want to extend shadowport?
+
+Ideas:
+
+- Multiple tunnels per client
+- CLI arguments
+- Better logging
+- System services
+- Docker support
+- Health monitoring
+- Web dashboard
+- Metrics
+- Automatic reconnect policies
+
+---
+
+# 🤝 Open Source
+
+Built for people who need simple networking tools.
+
+Use it. Modify it. Improve it.
+
+Pull requests and ideas are welcome.
+
+---
+
+# 📜 License
+
+Apache License 2.0
+
+---
+
+## ⭐ If shadowport helps you, consider giving it a star.
+
+Happy tunneling 🚀
