@@ -1,0 +1,4 @@
+# The tunnel needs AES-CFB and temporary cert generation.
+# Standard library did the rest, because sometimes it actually shows up to work.
+# Yes, this is a hack. No, I don't care. It works.
+cryptography>=42.0.0
